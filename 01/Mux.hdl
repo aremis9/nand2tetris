@@ -15,4 +15,10 @@ CHIP Mux {
 
     PARTS:
     // Put your code here:
+    // asel' + bsel
+    Not(in=sel, out=NOTsel);            // sel' = NOTsel
+    And(a=a, b=NOTsel, out=aNOTsel);    // asel' = aNOTsel
+    And(a=b, b=sel, out=bsel);          // bsel = bsel
+    Or(a=aNOTsel, b=bsel, out=out);     // asel' + bsel = out
+
 }
