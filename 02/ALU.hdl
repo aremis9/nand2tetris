@@ -42,5 +42,53 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    // zx = 0      x = x
+    // zx = 1      x = 0
+    Mux16(a=x, b=false, sel=zx, out=zxo);
+    // !x
+    Not16(in=zxo, out=nzxo);
+    // nx = 0      x = x
+    // nx = 1      x = !x
+    Mux16(a=zxo, b=nzxo, sel=nx, out=x1);
+
+
+    // zy = 0      y = y
+    // zy = 1      y = 0
+    Mux16(a=y, b=false, sel=zy, out=zyo);
+    // !y
+    Not16(in=zyo, out=nzyo);
+    // nx = 0      x = x
+    // nx = 1      x = !x
+    Mux16(a=zyo, b=nzyo, sel=ny, out=y1);
+
+    
+    // x + y = xpy (x plus y)
+    Add16(a=x1, b=y1, out=xpy);
+    // x AND y = xay (x and y)
+    And16(a=x1, b=y1, out=xay);
+    // f = 0      fo = x + y
+    // f = 1      fo = x AND y
+    Mux16(a=xay, b=xpy, sel=f, out=fo);
+
+
+    // !fo
+    Not16(in=fo, out=nfo);
+    // no = 0      o = fo
+    // no = 1      o = !fo
+    Mux16(a=fo, b=nfo, sel=no, out[0..14]=o0, out[15]=o1);
+
+
+    // o[0] OR o[1] OR ... OR o[7] = o0
+    // o2 = 1      out is not 0, zr = 0
+    // o2 = 0      out is 0, zr = 1
+    Or16Way(in[0..14]=o0, in[15]=o1, out=o2);
+    Not(in=o2, out=zr);
+
+    // check if o < 0 (o1 = 1)
+    // negative binary numbers start at 1
+    And(a=o1, b=true, out=ng);
+
+
+    // o0, o1 = out
+    Or16(a[0..14]=o0, a[15]=o1, b=false, out=out);
 }
