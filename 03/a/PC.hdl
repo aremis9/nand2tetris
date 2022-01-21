@@ -16,5 +16,13 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // Order of process (dominance): reset > load > inc
+    // 1. increment
+    // 2. load
+    // 3. reset
+    Inc16(in=out0, out=out1);
+    Mux16(a=out0, b=out1, sel=inc, out=i);
+    Mux16(a=i, b=in, sel=load, out=l);
+    Mux16(a=l, b[0..15]=false, sel=reset, out=r);
+    Register(in=r, load=true, out=out0, out=out);
 }
