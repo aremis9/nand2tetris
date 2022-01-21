@@ -1,6 +1,6 @@
 # Project 1
 
-Given <u><b>Nand</b></u>, build the following gates:
+Given <u><b>Nand</b></u>, build the following chips:
 
 ### Elementary Logic Gates
 - Not
